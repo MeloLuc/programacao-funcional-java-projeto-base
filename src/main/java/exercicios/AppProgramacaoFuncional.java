@@ -1,6 +1,8 @@
 package exercicios;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Aplicação de exemplo de princípios de programação funcional em Java,
@@ -23,6 +25,34 @@ public class AppProgramacaoFuncional {
 
     public AppProgramacaoFuncional() {
 
+        double maiorNota1 = estudantes.stream()
+                .filter((Estudante e) -> e.getSexo() == 'M')
+                .mapToDouble((Estudante e) -> e.getNota())
+                .max()
+                .orElse(0);
+
+        double maiorNota2 = estudantes.stream()
+                .filter(new Predicate<Estudante>() {
+                    @Override
+                    public boolean test(Estudante e) {
+                        return e.getSexo() == 'M';
+                    }
+                })
+                .mapToDouble((Estudante e) -> e.getNota())
+                .max()
+                .orElse(0);
+
+        double maiorNota3 = estudantes.stream()
+                .filter((var e) -> e.getSexo() == 'M') //var é opcional (inferência de tipo)
+                .mapToDouble((e) -> e.getNota())
+                .max()
+                .orElse(0);
+
+        System.out.println(maiorNota1);
+
+        System.out.println(maiorNota2);
+
+        System.out.println(maiorNota3);
     }
 
     public static void main(String[] args) {

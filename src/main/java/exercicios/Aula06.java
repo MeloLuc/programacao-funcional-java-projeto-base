@@ -2,8 +2,10 @@ package exercicios;
 
 import exercicios.base.Aula;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
+import static java.util.function.Predicate.not;
 
 /**
  * Esta é uma classe para você poder implementar as atividades propostas no README.
@@ -38,6 +40,62 @@ public class Aula06 extends Aula {
      */
     public Aula06() {
         //TODO: Insira chamdas das funções existentes aqui, para você conferir como estão funcionando
+
+        //PARTE 1
+        Predicate<Estudante> isHomem = Estudante::isHomem;  //guardando reference methods em variaveis
+        var NoIsHomem = not(Estudante::isHomem);
+        var filtro = isHomem.and(Estudante::hasCurso); // Aqui o var já identifica o tipo, pois and já se liga a Predicate
+        var filtro2 = ((Predicate<Estudante>)Estudante::isHomem).and(Estudante::hasCurso); // casting
+
+        long homens = estudantes.stream()
+                                .filter(isHomem)
+                                .count();
+
+        long homensPalmas = estudantes.stream()
+                .filter(filtro)
+                .filter(e -> e.getCidade().getNome().equals("Palmas"))
+                .count();
+
+        long homensNotPalmas = estudantes.stream()
+                .filter(Predicate.not(filtro2))
+                .filter(not(filtro2)) //ou desse jeito
+                .filter(e -> e.getCidade().getNome().equals("Palmas"))
+                .count();
+
+        System.out.println(homens);
+        System.out.println(homensPalmas);
+        System.out.println(homensNotPalmas);
+
+        //PARTE 2
+        //ordenando os estudante pela nota e imprimindo
+        estudantes.sort(Comparator.comparingDouble(Estudante::getNota));  // -1 0 1 (como base se o primeiro e menor, igual ou maior na comparação)
+        estudantes.forEach(System.out::println);
+
+        var filtro3 = ((Predicate<Estudante>)Estudante::hasCurso).and(Estudante::isAprovado);
+
+        System.out.println("\n---proximo---\n");
+        estudantes.stream()
+                .filter(filtro3)
+                .sorted(Comparator.comparingDouble(Estudante::getNota))
+                .forEach(System.out::println);
+
+        System.out.println("\n---proximo---\n");
+        estudantes.stream()
+                .filter(filtro3)
+                .sorted(Comparator.comparing(Estudante::getCurso)
+                        .thenComparing(Comparator.comparingDouble(Estudante::getNota).reversed())
+                        .thenComparingDouble(Estudante::getNota)) // ou assim
+                .forEach(System.out::println);
+
+        System.out.println("\n---proximo---\n");
+        // Também podemos salvar em variáveis
+        Comparator<Estudante> comparator = Comparator.comparing(Estudante::getCurso)
+                                                    .thenComparingDouble(Estudante::getNota);
+
+        estudantes.stream()
+                .filter(filtro3)
+                .sorted(comparator)
+                .forEach(System.out::println);
     }
 
     /**
