@@ -4,8 +4,12 @@ import exercicios.base.Aula;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import static java.util.function.Predicate.not;
+import static java.util.stream.Collectors.groupingBy;
 
 /**
  * Esta é uma classe para você poder implementar as atividades propostas no README.
@@ -96,6 +100,36 @@ public class Aula06 extends Aula {
                 .filter(filtro3)
                 .sorted(comparator)
                 .forEach(System.out::println);
+
+        //PARTE 3
+        List<String> list1 = estudantes.stream()
+                .filter(Estudante::hasCurso)
+                .filter(Estudante::isMulher)
+                .map(Estudante::getNome)
+                .collect(Collectors.toList());
+
+        String string1 = estudantes.stream()
+                .filter(Estudante::hasCurso)
+                .filter(Estudante::isMulher)
+                .map(Estudante::getNome)
+                .collect(Collectors.joining(", "));
+
+        var map1 = estudantes.stream()
+                .filter(Estudante::hasCurso)
+                .filter(Estudante::isMulher)
+                .collect(groupingBy(Estudante::getCurso));
+        map1.forEach((curso, estudantesL) -> {
+            System.out.println(curso.getNome());
+            estudantesL.forEach(e -> System.out.printf("\t%s\n", e.getNome()));
+        });
+
+        var map2 = estudantes.stream()
+                .filter(Estudante::hasCurso)
+                .filter(Estudante::isMulher)
+                .collect(
+                        groupingBy(Estudante::getCurso, Collectors.averagingDouble(Estudante::getNota)));
+        map2.forEach((curso, mediaNotas) -> System.out.printf("%s: %.2f\n", curso.getNome(), mediaNotas));
+
     }
 
     /**
