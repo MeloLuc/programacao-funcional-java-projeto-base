@@ -35,7 +35,31 @@ public class Aula08 extends Aula {
 
         mapPessoaComanda.putIfAbsent("Pedro", getValue()); //só adiciona se a chave não existir, invoca a função mesmo se já tiver o nome
         mapPessoaComanda.computeIfAbsent("Lucas", nome -> getValue());
+
+        // Se a chave não existir vOld(primeiro camppo vale 0) e vNew o atual(100), ou seja, caso a chave não exista o valor é adicionado
+        // Se a chave já existir a vai ficar (existi, nova) e a operação que vc quiser fazer para fazer o merge desse novo dado.
+        mapPessoaComanda.merge("Lucas", 100.0, (vOld, vNew) -> vOld + vNew);
+        mapPessoaComanda.merge("Lucas", 100.0, Double::sum); //mesma coisa da linha de cima porém com method reference
+
+        //Só sobre chaves que já existem
+        mapPessoaComanda.replaceAll((nome, valor) -> valor > 100 ? valor * 0.9 : valor);
+
+        //Se um dos parametros eu não estou usando, então eu posso colocar um _ (ignora a variável), pois assim permance um biFuncion
+        mapPessoaComanda.replaceAll((_, valor) -> valor * 1.2);
+
+        // Se quisermos mostrar o valor porém sem alterar meus dados
+        mapPessoaComanda.entrySet().stream().forEach(entry -> {
+            double valor = entry.getValue() <= 100 ? entry.getValue() : entry.getValue() * 1.5 ;
+            System.out.println("--"+entry.getKey()+": "+entry.getValue());
+        });
+
+        //entry é um unico parametro que engloba chave e valor
+        mapPessoaComanda.entrySet().removeIf(entry -> entry.getValue() < 100);
+
+
+
         mapPessoaComanda.forEach((nome, valor) -> System.out.println(nome+": "+valor));
+
     }
 
     private static double getValue() {
